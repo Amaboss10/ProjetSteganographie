@@ -1,17 +1,14 @@
-# === CMake / build ===
+# === Build system ===
 build/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# === Objets et exécutables ===
+# === Fichiers objets et binaires ===
 *.o
 *.out
 *.exe
-
-# === Images générées ===
-images/*.raw
 
 # === Fichiers temporaires / système ===
 *.log
@@ -19,6 +16,5 @@ images/*.raw
 *.swp
 .DS_Store
 
-# === VSCode / éditeurs ===
-.vscode/
-.idea/
+# === Ignorer uniquement les fichiers .raw dans le dossier images ===
+images/*.raw
