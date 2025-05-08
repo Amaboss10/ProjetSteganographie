@@ -1,0 +1,24 @@
+# === CMake / build ===
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# === Objets et exécutables ===
+*.o
+*.out
+*.exe
+
+# === Images générées ===
+images/*.raw
+
+# === Fichiers temporaires / système ===
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+# === VSCode / éditeurs ===
+.vscode/
+.idea/
