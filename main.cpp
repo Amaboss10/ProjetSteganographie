@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string> 
+#include <chrono>
 
 #include "utils/image.hpp"
 #include "utils/raw_image_loader.hpp"
-#include "utils/encode_cpu.hpp" 
+#include "utils/encode_cpu.hpp"
 #include "utils/decode_cpu.hpp"
+#include "utils/encode_naive.hpp"
 
 void invert( Image & image )
 {
@@ -20,15 +22,23 @@ int main(int argc, char** argv)
     // Mode décodage uniquement
     if (argc > 1 && std::string(argv[1]) == "decrypt")
     {
+        std::string inputEncoded = (argc > 2 && std::string(argv[2]) == "gpu")
+                                   ? "./images/oizo_encoded_gpu.png"
+                                   : "./images/oizo_encoded.png";
+
+        std::string outputDecoded = (argc > 2 && std::string(argv[2]) == "gpu")
+                                   ? "./images/oizo_decoded_gpu.png"
+                                   : "./images/oizo_decoded.png";
+
         // === Décodage LSB CPU ===
         Image encodedImage;
-        if (!encodedImage.load("./images/roi_encoded.png"))
+        if (!encodedImage.load(inputEncoded))
         {
             std::cerr << "Error: Could not load encoded image!" << std::endl;
             return -1;
         }
 
-        cpu_decode(encodedImage, "./images/roi_decoded.png");
+        cpu_decode(encodedImage, outputDecoded);
         return 0;
     }
 
@@ -48,7 +58,7 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    // Loading raw image (it contains all the png stuff) and saving it
+    // Loading raw image and saving it
     int             rawByteSize = 0;
     unsigned char * rawData     = loadRawImage( "./images/malice.png", rawByteSize );
     if ( !rawData )
@@ -74,9 +84,9 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    // === Encodage LSB CPU ===
+    // === Encodage LSB (choix CPU / CUDA) ===
     Image carrier;
-    if (!carrier.load("./images/roi.png"))
+    if (!carrier.load("./images/oizo.png"))
     {
         std::cerr << "Error: Could not load carrier image!" << std::endl;
         return -1;
@@ -90,9 +100,28 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cpu_encode(carrier, hiddenData, hiddenSize);
+    // Choix du mode d'encodage et chrono
+    std::string outputPath;
+    if (argc > 1 && std::string(argv[1]) == "gpu") {
+        outputPath = "./images/oizo_encoded_gpu.png";
 
-    if (!carrier.save("./images/roi_encoded.png"))
+        auto start = std::chrono::high_resolution_clock::now();
+        encode_naive(carrier, hiddenData, hiddenSize);
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> duration = end - start;
+        std::cout << "Temps CUDA (encode_naive) : " << duration.count() << " ms" << std::endl;
+
+    } else {
+        outputPath = "./images/oizo_encoded.png";
+
+        auto start = std::chrono::high_resolution_clock::now();
+        cpu_encode(carrier, hiddenData, hiddenSize);
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> duration = end - start;
+        std::cout << "Temps CPU (cpu_encode) : " << duration.count() << " ms" << std::endl;
+    }
+
+    if (!carrier.save(outputPath))
     {
         std::cerr << "Error: Could not save encoded image!" << std::endl;
         delete[] hiddenData;

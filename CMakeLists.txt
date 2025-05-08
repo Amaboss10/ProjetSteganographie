@@ -1,19 +1,25 @@
 cmake_minimum_required(VERSION 3.5)
-project(ProjetSteganographieBase)
+project(ProjetSteganographieBase LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
+enable_language(CUDA)
 
-add_executable(ProjetSteganographieBase main.cpp
-        utils/image.hpp
-        utils/image.cpp
-        utils/raw_image_loader.cpp
-        utils/raw_image_loader.hpp
-        utils/stb/stb_image.h
-        utils/stb/stb_image_write.h
-        utils/encode_cpu.cpp
-        utils/encode_cpu.hpp
-        utils/decode_cpu.cpp
-        utils/decode_cpu.hpp
+# Fichiers source C++ et CUDA
+add_executable(ProjetSteganographieBase
+    main.cpp
+    utils/image.cpp
+    utils/raw_image_loader.cpp
+    utils/decode_cpu.cpp
+    utils/encode_cpu.cpp
+    utils/encode_naive.cu
+
+    utils/image.hpp
+    utils/raw_image_loader.hpp
+    utils/decode_cpu.hpp
+    utils/encode_cpu.hpp
+    utils/encode_naive.hpp
+    utils/stb/stb_image.h
+    utils/stb/stb_image_write.h
 )
 
 # Behind this comment, the CMake instructions to copy the images folder
