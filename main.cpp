@@ -1,10 +1,10 @@
 #include <iostream>
+#include <string> 
 
 #include "utils/image.hpp"
 #include "utils/raw_image_loader.hpp"
 #include "utils/encode_cpu.hpp" 
 #include "utils/decode_cpu.hpp"
-
 
 void invert( Image & image )
 {
@@ -15,8 +15,23 @@ void invert( Image & image )
     }
 }
 
-int main()
+int main(int argc, char** argv)
 {
+    // Mode décodage uniquement
+    if (argc > 1 && std::string(argv[1]) == "decrypt")
+    {
+        // === Décodage LSB CPU ===
+        Image encodedImage;
+        if (!encodedImage.load("./images/roi_encoded.png"))
+        {
+            std::cerr << "Error: Could not load encoded image!" << std::endl;
+            return -1;
+        }
+
+        cpu_decode(encodedImage, "./images/roi_decoded.png");
+        return 0;
+    }
+
     // Loading and saving images
     Image image;
     if ( !image.load( "./images/agile.png" ) )
@@ -61,7 +76,7 @@ int main()
 
     // === Encodage LSB CPU ===
     Image carrier;
-    if (!carrier.load("./images/oizo.png"))
+    if (!carrier.load("./images/roi.png"))
     {
         std::cerr << "Error: Could not load carrier image!" << std::endl;
         return -1;
@@ -77,7 +92,7 @@ int main()
 
     cpu_encode(carrier, hiddenData, hiddenSize);
 
-    if (!carrier.save("./images/boule_encoded.png"))
+    if (!carrier.save("./images/roi_encoded.png"))
     {
         std::cerr << "Error: Could not save encoded image!" << std::endl;
         delete[] hiddenData;

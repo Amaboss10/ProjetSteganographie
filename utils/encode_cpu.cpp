@@ -5,29 +5,33 @@ void cpu_encode(Image &carrierImage, const unsigned char *hiddenData, int hidden
     unsigned char *carrierData = carrierImage.data();
     int carrierSize = carrierImage.byteSize();
 
-    // Vérification : a-t-on assez de place pour cacher les données ?
-    if (hiddenSize * 8 + 16 > carrierSize) {
-        std::cerr << "Erreur : image porteuse trop petite pour cacher l'image." << std::endl;
+    int requiredBits = 8 + 32 + hiddenSize * 8; // start sentinel + size + data
+
+    if (requiredBits > carrierSize) {
+        std::cerr << "Erreur : image porteuse trop petite pour cacher les données." << std::endl;
         return;
     }
 
-    // 1. Insertion de la sentinelle de début (ex : 8 bits à 1)
-    for (int i = 0; i < 8; ++i) {
-        carrierData[i] = (carrierData[i] & 0xFE) | 1;
+    int bitIndex = 0;
+
+    // Sentinelle de début (8 bits à 1)
+    for (int i = 0; i < 8; ++i, ++bitIndex) {
+        carrierData[bitIndex] = (carrierData[bitIndex] & 0xFE) | 1;
     }
 
-    // 2. Insertion des données cachées
-    int bitIndex = 8; // on commence après la sentinelle de début
+    // Encodage de la taille (32 bits)
+    for (int i = 31; i >= 0; --i, ++bitIndex) {
+        unsigned char bit = (hiddenSize >> i) & 1;
+        carrierData[bitIndex] = (carrierData[bitIndex] & 0xFE) | bit;
+    }
+
+    // Encodage des données
     for (int i = 0; i < hiddenSize; ++i) {
-        for (int bit = 7; bit >= 0; --bit) {
-            unsigned char bitToHide = (hiddenData[i] >> bit) & 1;
-            carrierData[bitIndex] = (carrierData[bitIndex] & 0xFE) | bitToHide;
-            ++bitIndex;
+        for (int b = 7; b >= 0; --b, ++bitIndex) {
+            unsigned char bit = (hiddenData[i] >> b) & 1;
+            carrierData[bitIndex] = (carrierData[bitIndex] & 0xFE) | bit;
         }
     }
 
-    // 3. Insertion de la sentinelle de fin (ex : 8 bits à 0)
-    for (int i = 0; i < 8; ++i) {
-        carrierData[bitIndex + i] = (carrierData[bitIndex + i] & 0xFE);
-    }
+    std::cout << "Encodage terminé : " << hiddenSize << " octets." << std::endl;
 }
