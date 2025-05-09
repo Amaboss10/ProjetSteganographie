@@ -4,7 +4,11 @@ project(ProjetSteganographieBase LANGUAGES CXX CUDA)
 set(CMAKE_CXX_STANDARD 17)
 enable_language(CUDA)
 
-# Fichiers source C++ et CUDA
+# Résout le warning CMP0104 et spécifie les architectures CUDA cibles
+cmake_policy(SET CMP0104 NEW)
+set(CMAKE_CUDA_ARCHITECTURES 52 60 61 70 75 86)
+
+# Exécutable avec tous les fichiers source nécessaires
 add_executable(ProjetSteganographieBase
     main.cpp
     utils/image.cpp
@@ -12,12 +16,14 @@ add_executable(ProjetSteganographieBase
     utils/decode_cpu.cpp
     utils/encode_cpu.cpp
     utils/encode_naive.cu
+    utils/find_sentinels_naive.cu
 
     utils/image.hpp
     utils/raw_image_loader.hpp
     utils/decode_cpu.hpp
     utils/encode_cpu.hpp
     utils/encode_naive.hpp
+    utils/find_sentinels_naive.hpp
     utils/stb/stb_image.h
     utils/stb/stb_image_write.h
 )

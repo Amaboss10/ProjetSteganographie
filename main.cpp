@@ -1,12 +1,14 @@
 #include <iostream>
 #include <string> 
 #include <chrono>
+#include <vector>
 
 #include "utils/image.hpp"
 #include "utils/raw_image_loader.hpp"
 #include "utils/encode_cpu.hpp"
 #include "utils/decode_cpu.hpp"
 #include "utils/encode_naive.hpp"
+#include "utils/find_sentinels_naive.hpp"
 
 void invert( Image & image )
 {
@@ -100,7 +102,6 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    // Choix du mode d'encodage et chrono
     std::string outputPath;
     if (argc > 1 && std::string(argv[1]) == "gpu") {
         outputPath = "./images/oizo_encoded_gpu.png";
@@ -129,6 +130,21 @@ int main(int argc, char** argv)
     }
 
     delete[] hiddenData;
+
+    // === Analyse des sentinelles CUDA ===
+    std::vector<int> sentinels;
+    Image original;
+    if (!original.load("./images/oizo.png")) {
+        std::cerr << "Error: Could not load original image for comparison!" << std::endl;
+        return -1;
+    }
+
+    find_sentinels_naive(carrier, original, sentinels);
+    std::cout << "Premiers indices modifiés : ";
+    for (size_t i = 0; i < std::min<size_t>(10, sentinels.size()); ++i) {
+        std::cout << sentinels[i] << " ";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
