@@ -1,11 +1,7 @@
-#ifndef NAIVE_DECRYPT_HPP
-#define NAIVE_DECRYPT_HPP
-
+#pragma once
 #include "image.hpp"
 #include <vector>
 #include <string>
 
-// Décode l'image cachée à partir des indices de sentinelles et la sauvegarde
+// Version avec détection via sentinelles
 void naive_decrypt(const Image &carrier, const std::vector<int> &sentinels, const std::string &outputPath);
-
-#endif // NAIVE_DECRYPT_HPP

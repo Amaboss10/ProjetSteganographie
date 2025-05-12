@@ -1,3 +1,4 @@
+
 #ifndef ENCODE_NAIVE_HPP
 #define ENCODE_NAIVE_HPP
 

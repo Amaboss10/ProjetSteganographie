@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 # Compilation
@@ -10,6 +9,8 @@ cmake --build build
 if [ "$1" == "decrypt" ]; then
     if [ "$2" == "gpu" ]; then
         ./build/ProjetSteganographieBase decrypt gpu
+    elif [ "$2" == "cuda" ]; then
+        ./build/ProjetSteganographieBase decrypt cuda
     else
         ./build/ProjetSteganographieBase decrypt
     fi

@@ -1,3 +1,4 @@
+
 #include "encode_naive.hpp"
 #include <cuda_runtime.h>
 #include <iostream>

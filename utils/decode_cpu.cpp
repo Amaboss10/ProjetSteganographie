@@ -55,11 +55,6 @@ void cpu_decode(const Image &carrierImage, const std::string &outputPath) {
 
     std::cout << "Octets extraits : " << hiddenData.size() << std::endl;
 
-    // Sauvegarde brute pour inspection
-    std::ofstream out("images/debug_output.raw", std::ios::binary);
-    out.write(reinterpret_cast<const char*>(hiddenData.data()), hiddenData.size());
-    out.close();
-
     // 5. Création de l'image
     Image extracted;
     if (!extracted.createFromRawImage(hiddenData.data(), hiddenData.size())) {
