@@ -20,12 +20,12 @@ int main(int argc, char** argv)
 
     // === Mode décodage ===
     if (argc >= 2 && std::string(argv[1]) == "decrypt") {
-        std::string encodedPath = "./images/encoded/oizo_encoded.png";
-        std::string outputPath  = "./images/decoded/oizo_decoded.png";
+        std::string encodedPath = "./images/encoded/rat_encoded.png";
+        std::string outputPath  = "./images/decoded/rat_decoded.png";
 
         if (argc >= 3 && std::string(argv[2]) == "gpu") {
-            encodedPath = "./images/encoded/oizo_encoded_gpu.png";
-            outputPath  = "./images/decoded/oizo_decoded_gpu.png";
+            encodedPath = "./images/encoded/rat_encoded_gpu.png";
+            outputPath  = "./images/decoded/rat_decoded_gpu.png";
         }
 
         Image encodedImage;
@@ -48,22 +48,22 @@ int main(int argc, char** argv)
 
     // === Mode encodage ===
     Image carrier;
-    if (!carrier.load("./images/oizo.png")) {
-        std::cerr << "Erreur : impossible de charger l'image porteuse ./images/oizo.png" << std::endl;
+    if (!carrier.load("./images/rat.png")) {
+        std::cerr << "Erreur : impossible de charger l'image porteuse ./images/rat.png" << std::endl;
         return -1;
     }
 
     int hiddenSize = 0;
-    unsigned char* hiddenData = loadRawImage("./images/malice.png", hiddenSize);
+    unsigned char* hiddenData = loadRawImage("./images/soleil_nuit.png", hiddenSize);
     if (!hiddenData) {
-        std::cerr << "Erreur : impossible de charger l'image cachée ./images/malice.png" << std::endl;
+        std::cerr << "Erreur : impossible de charger l'image cachée ./images/soleil_nuit.png" << std::endl;
         return -1;
     }
 
-    std::string encodedPath = "./images/encoded/oizo_encoded.png";
+    std::string encodedPath = "./images/encoded/rat_encoded.png";
 
     if (argc >= 2 && std::string(argv[1]) == "gpu") {
-        encodedPath = "./images/encoded/oizo_encoded_gpu.png";
+        encodedPath = "./images/encoded/rat_encoded_gpu.png";
 
         auto start = std::chrono::high_resolution_clock::now();
         encode_naive(carrier, hiddenData, hiddenSize);
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
         delete[] hiddenData;
         return -1;
     }
-
+  
     delete[] hiddenData;
     return 0;
 }

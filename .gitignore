@@ -5,6 +5,9 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 
+# Python virtual environment
+venv/
+
 # === Fichiers objets et binaires ===
 *.o
 *.out
